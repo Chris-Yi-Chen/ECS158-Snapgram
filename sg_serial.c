@@ -23,7 +23,6 @@ void sg_recommender(uint32_t *G, size_t V, uint32_t *R)
             if (j != i && G[i * V + j] == 0 && max < sum) {
 				max = sum;
 				maxIndex = j;
-                printf("max: %d\n", max);
 			}
             R[i] = maxIndex;
 		}
