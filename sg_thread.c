@@ -3,7 +3,6 @@
 #include <string.h>
 #include <pthread.h>
 
-
 #define N_THREADS 8
 
 typedef struct {
@@ -24,10 +23,12 @@ void *multiply(void *arg) {
     uint32_t *G = args->G;
     size_t V = args->V;
 
-	for (size_t i = beg; i < end; i++) {
-		for (size_t k = 0; k < V; k++) {
+    size_t i,j,k;
+
+	for (i = beg; i < end; i++) {
+		for (k = 0; k < V; k++) {
 			uint32_t r = G[i * V + k];
-			for (size_t j = 0; j < V; j++) {
+			for (j = 0; j < V; j++) {
 				C[i * V + j] += r * G[k * V + j];
 			}
 		}
@@ -41,13 +42,15 @@ void sg_recommender(uint32_t *G, size_t V, uint32_t *R)
 	C = aligned_alloc(64, V * V * sizeof(uint32_t));
 	memset(C, 0, V * V * sizeof(uint32_t));
 
+    size_t i,j;
+
 
 
 	pthread_t threads[N_THREADS];
 	int chunkSize = V / N_THREADS;
     ThreadArgs arguments[N_THREADS];
 	size_t beg = 0;
-	for (size_t i = 0; i < N_THREADS; i++) {
+	for ( i = 0; i < N_THREADS; i++) {
 		size_t end = beg + chunkSize;
 		arguments[i].beg = beg;
 		arguments[i].end = end;
@@ -59,15 +62,14 @@ void sg_recommender(uint32_t *G, size_t V, uint32_t *R)
 		beg = end;
     }
 
-	for (int i = 0; i < N_THREADS; i++) {
+	for (i = 0; i < N_THREADS; i++) {
         pthread_join(threads[i], NULL);
     }
 
-
-	for (size_t i = 0; i < V; i++) {
+	for (i = 0; i < V; i++) {
 		uint32_t max = 0;
 		size_t maxIndex = i;
-		for (size_t j = 0; j < V; j++) {
+		for (j = 0; j < V; j++) {
 			if (j != i && G[i * V + j] == 0 && max < C[i * V + j]) {
 				max = C[i * V + j];
 				maxIndex = j;
