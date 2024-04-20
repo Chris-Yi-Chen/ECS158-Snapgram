@@ -1,7 +1,6 @@
-BIN := snapgram_serial snapgram_thread 
-#snapgram_block
+BIN := snapgram_serial snapgram_thread snapgram_block
 
-CFLAGS := -Wall -Wextra -Werror
+CFLAGS := -Wall -Wextra -Werror -O2
 
 all: $(BIN)
 
