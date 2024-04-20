@@ -4,12 +4,12 @@
 #include <pthread.h>
 
 #define N_THREADS 8
-size_t bsize = 32; // 32 uint32_t * 32 uint32_t => 16KB
+size_t bsize; // 32 uint32_t * 32 uint32_t => 16KB
 
 typedef struct {
     size_t jj_beg;
     size_t kk_beg;
-        uint32_t *C;
+    uint32_t *C;
     uint32_t *G;
     size_t V;
 } ThreadArgs;
@@ -40,6 +40,8 @@ void sg_recommender(uint32_t *G, size_t V, uint32_t *R)
     uint32_t *C;
     C = aligned_alloc(64, V * V * sizeof(uint32_t));
     memset(C, 0, V * V * sizeof(uint32_t));
+
+    bsize = V / N_THREADS;
 
     // G_g = G;
     // V_g = V;
